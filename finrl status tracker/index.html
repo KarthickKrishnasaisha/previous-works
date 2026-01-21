@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FinRL Learning Roadmap</title>
+
+  <style>
+    /* ====== GLOBAL ====== */
+    body {
+      margin: 0;
+      padding: 32px;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #f8fafc, #eef2ff);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: #0f172a;
+    }
+
+    .container {
+      max-width: 1800px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 22px;
+    }
+
+    h1 {
+      font-size: clamp(28px, 3vw, 42px);
+      font-weight: 800;
+      margin: 0;
+      letter-spacing: -0.02em;
+    }
+
+    /* ====== BOARD ====== */
+    .board {
+      position: relative;
+      width: min(96vw, 1750px);
+      background: white;
+      border-radius: 22px;
+      overflow: hidden;
+      box-shadow:
+        0 20px 40px rgba(15, 23, 42, 0.18),
+        0 8px 16px rgba(15, 23, 42, 0.08);
+    }
+
+    .board img {
+      width: 100%;
+      height: auto;
+      display: block;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    /* ====== AVATAR ====== */
+    .avatar {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      width: clamp(48px, 4.5vw, 70px);
+      height: clamp(48px, 4.5vw, 70px);
+      border-radius: 50%;
+      background: linear-gradient(135deg, #2563eb, #4f46e5);
+      display: grid;
+      place-items: center;
+      font-size: clamp(24px, 2.8vw, 34px);
+      color: white;
+      box-shadow:
+        0 12px 26px rgba(37, 99, 235, 0.45),
+        inset 0 0 0 2px rgba(255,255,255,0.25);
+      transition:
+        left 420ms cubic-bezier(.2,.8,.2,1),
+        top 420ms cubic-bezier(.2,.8,.2,1);
+      z-index: 10;
+    }
+
+    .avatar::after {
+      content: "";
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+      border: 3px solid rgba(79, 70, 229, 0.35);
+      animation: pulse 1.6s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%   { transform: scale(0.95); opacity: 0.6; }
+      50%  { transform: scale(1.08); opacity: 0.25; }
+      100% { transform: scale(0.95); opacity: 0.6; }
+    }
+
+    /* ====== TOOLTIP ====== */
+    .tooltip {
+      position: absolute;
+      transform: translate(-50%, -130%);
+      background: #0f172a;
+      color: white;
+      padding: 10px 14px;
+      border-radius: 14px;
+      font-size: clamp(14px, 1.4vw, 18px);
+      font-weight: 600;
+      white-space: nowrap;
+      box-shadow: 0 14px 30px rgba(0,0,0,0.35);
+      z-index: 11;
+      pointer-events: none;
+    }
+
+    .tooltip::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: -8px;
+      transform: translateX(-50%);
+      border-left: 8px solid transparent;
+      border-right: 8px solid transparent;
+      border-top: 8px solid #0f172a;
+    }
+
+    /* ====== CONTROLS ====== */
+    .controls {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 8px;
+    }
+
+    button {
+      padding: 14px 24px;
+      border-radius: 14px;
+      border: none;
+      cursor: pointer;
+      background: linear-gradient(135deg, #2563eb, #4f46e5);
+      color: #ffffff;
+      font-weight: 700;
+      font-size: clamp(15px, 1.5vw, 18px);
+      box-shadow: 0 10px 22px rgba(37, 99, 235, 0.35);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 28px rgba(37, 99, 235, 0.45);
+    }
+
+    button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .secondary {
+      background: #e5e7eb;
+      color: #0f172a;
+      box-shadow: none;
+    }
+
+    .status {
+      padding: 12px 18px;
+      background: #eef2ff;
+      border-radius: 999px;
+      font-size: clamp(14px, 1.4vw, 18px);
+      font-weight: 600;
+      color: #3730a3;
+      border: 1px solid #c7d2fe;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>FinRL Learning Roadmap</h1>
+
+    <div class="board">
+      <img src="FinRL_Tutorials.png" alt="FinRL Tutorials Roadmap" />
+
+      <div id="avatar" class="avatar">🧑‍🚀</div>
+      <div id="tooltip" class="tooltip"></div>
+    </div>
+
+    <div class="controls">
+      <button id="doneBtn">Done →</button>
+      <button id="resetBtn" class="secondary">Reset</button>
+      <div id="status" class="status"></div>
+    </div>
+  </div>
+
+  <script>
+    const steps = [
+      { name: "Start", x: 8.3, y: 85.8 },
+
+      { name: "Intro · StockTrading NeurIPS 2018", x: 23.0, y: 85.8 },
+      { name: "Intro · PortfolioAllocation NeurIPS 2020", x: 48.6, y: 85.8 },
+      { name: "Intro · StockTrading Fundamental", x: 74.8, y: 85.8 },
+
+      { name: "Advance · PortfolioAllocation Explainable DRL", x: 74.8, y: 64.0 },
+      { name: "Advance · Compare ElegantRL / RLlib / SB3", x: 48.6, y: 64.0 },
+      { name: "Advance · Ensemble StockTrading ICAIF 2020", x: 22.6, y: 64.0 },
+
+      { name: "Practical · PaperTrading Demo", x: 22.6, y: 44.2 },
+      { name: "Practical · MultiCrypto Trading", x: 48.6, y: 44.2 },
+      { name: "Practical · China A-Share Market", x: 74.8, y: 44.2 },
+
+      { name: "Optimization · Hyperparameter Tuning Optuna", x: 74.5, y: 20.6 },
+      { name: "Optimization · Hyperparameter Tuning RayTune", x: 49.0, y: 20.6 },
+      { name: "Optimization · Weights & Bias + SB3", x: 23.4, y: 20.6 },
+
+      { name: "End", x: 8.3, y: 20.6 }
+    ];
+
+    const connectorX = { left: 11.0, right: 86.2 };
+
+    const avatar = document.getElementById("avatar");
+    const tooltip = document.getElementById("tooltip");
+    const doneBtn = document.getElementById("doneBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const status = document.getElementById("status");
+
+    const STORAGE_KEY = "finrl_step_index_v2";
+
+    let index = (() => {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      return saved ? Number(saved) : 0;
+    })();
+
+    function setPos(x, y) {
+      avatar.style.left = x + "%";
+      avatar.style.top = y + "%";
+      tooltip.style.left = x + "%";
+      tooltip.style.top = y + "%";
+    }
+
+    function updateUI() {
+      tooltip.textContent = steps[index].name;
+      status.textContent = `${index + 1} / ${steps.length} — ${steps[index].name}`;
+      doneBtn.disabled = index === steps.length - 1;
+      localStorage.setItem(STORAGE_KEY, index);
+    }
+
+    function sleep(ms) {
+      return new Promise(r => setTimeout(r, ms));
+    }
+
+    function path(from, to) {
+      if (Math.abs(from.y - to.y) < 2) return [to];
+      const side = from.x > 50 ? "right" : "left";
+      const cx = connectorX[side];
+      return [
+        { x: cx, y: from.y },
+        { x: cx, y: to.y },
+        to
+      ];
+    }
+
+    async function moveNext() {
+      const from = steps[index];
+      const to = steps[index + 1];
+      const p = path(from, to);
+      for (const pt of p) {
+        setPos(pt.x, pt.y);
+        await sleep(460);
+      }
+      index++;
+      updateUI();
+    }
+
+    doneBtn.onclick = () => moveNext();
+    resetBtn.onclick = () => {
+      index = 0;
+      setPos(steps[0].x, steps[0].y);
+      updateUI();
+    };
+
+    // init
+    setPos(steps[index].x, steps[index].y);
+    updateUI();
+  </script>
+</body>
+</html>
